@@ -33,7 +33,7 @@
                 <textarea id="input-box" rows=1 cols=36>
                 </textarea>
                 <hr>
-                <div class="ui-grid-a">
+                <div class="ui-grid-c">
                     <div class="ui-block-a">
                         <img src="res/morse_off.png" width="100%" heigth="100%" id="morseinput" alt="">
                         </img><input type="button" value="OK" id="decision">
@@ -42,6 +42,14 @@
                     </div>
                     <div class="ui-block-b">
                         <div id="suggest">
+                        </div>
+                    </div>
+                    <div class="ui-block-c">
+                        <div id="suggest_num">
+                        </div>
+                    </div>
+                    <div class="ui-block-d">
+                        <div id="suggest_etc">
                         </div>
                     </div>
                 </div>
@@ -57,6 +65,16 @@
             $(function(){
                 //$("suggest").hide();
                 morse_queue = "";
+                for (key in morsedatas_alpha) {
+                    morsedatas[key] = morsedatas_alpha[key];
+                }
+                for (key in morsedatas_num) {
+                    morsedatas[key] = morsedatas_num[key];
+                }
+                for (key in morsedatas_etc) {
+                    morsedatas[key] = morsedatas_etc[key];
+                }
+                
                 $("#input-box").text("");
                 var morseTouchHandler = getMorseInputHandler();
                 var okTouchHandler = getOKInputHandler();
@@ -70,7 +88,9 @@
                 
             });
             
-            var morsedatas = {
+            var morsedatas = {}
+            
+            var morsedatas_alpha = {
                 "・ ー ": "A",
                 "ー ・ ・ ・ ": "B",
                 "ー ・ ー ・ ": "C",
@@ -99,6 +119,37 @@
                 "ー ー ・ ・ ": "Z"
             }
             
+            var morsedatas_num = {
+                "ー ー ー ー ー ": "0",
+                "・ ー ー ー ー ": "1",
+                "・ ・ ー ー ー ": "2",
+                "・ ・ ・ ー ー ": "3",
+                "・ ・ ・ ・ ー ": "4",
+                "・ ・ ・ ・ ・ ": "5",
+                "ー ・ ・ ・ ・ ": "6",
+                "ー ー ・ ・ ・ ": "7",
+                "ー ー ー ・ ・ ": "8",
+                "ー ー ー ー ・ ": "9",
+            }
+            
+            var morsedatas_etc = {
+                "・ ー ・ ー ・ ー ": ".",
+                "ー ー ・ ・ ー ー ": ",",
+                "・ ・ ー ー ・ ・ ": "?",
+                "・ ー ・ ー ・ ": "+",
+                "ー ・ ・ ・ ・ ー ": "-",
+                "ー ・ ・ ー ": "*",
+                "ー ・ ・ ー ・ ": "/",
+                "ー ・ ・ ・ ー ": "=",
+                "ー ・ ー ー ・ ": "(",
+                "ー ・ ー ー ・ ー ": ")",
+                "・ ー ー ー ー ・ ": "\`",
+                "・ ー ・ ・ ー ・ ": "\"",
+                "ー ー ー ・ ・ ・ ": ":",
+                "・ ー ー ・ ー ・ ": "@",
+                "・ ・ ・ ・ ・ ・ ・ ・ ": "HH",
+            }
+            
             function getOKInputHandler(){
                 return function(e){
                     e.preventDefault();
@@ -106,9 +157,17 @@
                     var touch = e.originalEvent.touches[0];
                     if ((e.type == "touchend" || e.type == "mouseup") && morsedatas[morse_queue]) {
                         var tmpmsg = $("#input-box").val();
-                        $("#input-box").val(tmpmsg + morsedatas[morse_queue]);
+                        if (morsedatas[morse_queue] != "HH") {
+                            $("#input-box").val(tmpmsg + morsedatas[morse_queue]);
+                        }
+                        else {
+                            var hhmsg = tmpmsg.slice(0, tmpmsg.length - 1);
+                            $("#input-box").val(hhmsg);
+                        }
                         morse_queue = "";
                         $("#suggest").text("");
+                        $("#suggest_num").text("");
+                        $("#suggest_etc").text("");
                     }
                 }
             }
@@ -121,6 +180,8 @@
                     if (e.type == "touchend" || e.type == "mouseup") {
                         morse_queue = "";
                         $("#suggest").text("");
+                        $("#suggest_num").text("");
+                        $("#suggest_etc").text("");
                     }
                 }
             }
@@ -161,7 +222,10 @@
                             reqestFunction(morse_off);
                         }
                     //suggest
-                    reqestFunction(morse_suggest);
+                    reqestFunction(morse_alpha_suggest);
+                    reqestFunction(morse_num_suggest);
+                    reqestFunction(morse_etc_suggest);
+                    reqestFunction(is_morse_suggest);
                     isMorseInput = false;
                 }
             }
@@ -178,23 +242,58 @@
                 $("#morseinput").attr("src", "res/morse_off.png");
             }
             
-            function morse_suggest(){
+            function morse_alpha_suggest(){
                 var suggests = [];
                 var tmpstr = "<ul>";
-                for (key in morsedatas) {
+                for (key in morsedatas_alpha) {
                     if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
                         suggests.push(key);
                         var nextstr = key.slice(morse_queue.length - 1);
-                        tmpstr += "<li>" + "<strong>" + morse_queue.fontcolor("red") + "</strong>" + nextstr + " => " + morsedatas[key] + "</li>";
+                        tmpstr += "<li>" + "<strong>" + morse_queue.fontcolor("red") + "</strong>" + nextstr + " => " + morsedatas_alpha[key] + "</li>";
                     }
                 }
                 tmpstr += "</ul>";
                 //$("#suggest").text(tmpstr);
                 $("#suggest").html(tmpstr);
-                
+            }
+            
+            function morse_num_suggest(){
+                var suggests = [];
+                var tmpstr = "<ul>";
+                for (key in morsedatas_num) {
+                    if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
+                        suggests.push(key);
+                        var nextstr = key.slice(morse_queue.length - 1);
+                        tmpstr += "<li>" + "<strong>" + morse_queue.fontcolor("red") + "</strong>" + nextstr + " => " + morsedatas_num[key] + "</li>";
+                    }
+                }
+                tmpstr += "</ul>";
+                $("#suggest_num").html(tmpstr);
+            }
+            
+            function morse_etc_suggest(){
+                var suggests = [];
+                var tmpstr = "<ul>";
+                for (key in morsedatas_etc) {
+                    if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
+                        suggests.push(key);
+                        var nextstr = key.slice(morse_queue.length - 1);
+                        tmpstr += "<li>" + "<strong>" + morse_queue.fontcolor("red") + "</strong>" + nextstr + " => " + morsedatas_etc[key] + "</li>";
+                    }
+                }
+                tmpstr += "</ul>";
+                $("#suggest_etc").html(tmpstr);
+            }
+            
+            function is_morse_suggest(){
+                var suggests = [];
+                for (key in morsedatas) {
+                    if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
+                        suggests.push(key);
+                    }
+                }
                 if (suggests.length == 0) {
                     morse_queue = "";
-                    //$("#input-box").text("");
                 }
             }
         </script>
