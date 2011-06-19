@@ -174,10 +174,11 @@
                 }
                 
                 var morsedatas_etc = {
+                    "・ ・ ・ ・ ・ ・ ": "SPACE",
                     "・ ー ・ ー ・ ー ": ".",
                     "ー ー ・ ・ ー ー ": ",",
                     "・ ・ ー ー ・ ・ ": "?",
-					"・ ・ ー ー ・ ": "!",
+                    "・ ・ ー ー ・ ": "!",
                     "・ ー ・ ー ・ ": "+",
                     "ー ・ ・ ・ ・ ー ": "-",
                     "ー ・ ・ ー ー ": "*",
@@ -199,13 +200,17 @@
                         var touch = e.originalEvent.touches[0];
                         if ((e.type == "touchend" || e.type == "mouseup") && morsedatas[morse_queue]) {
                             var tmpmsg = $("#input-box").val();
-                            if (morsedatas[morse_queue] != "HH") {
-                                $("#input-box").val(tmpmsg + morsedatas[morse_queue]);
-                            }
-                            else {
+                            if (morsedatas[morse_queue] == "HH") {
                                 var hhmsg = tmpmsg.slice(0, tmpmsg.length - 1);
                                 $("#input-box").val(hhmsg);
                             }
+                            else 
+                                if (morsedatas[morse_queue] == "SPACE") {
+                                    $("#input-box").val(tmpmsg + " ");
+                                }
+                                else {
+                                    $("#input-box").val(tmpmsg + morsedatas[morse_queue]);
+                                }
                             morse_queue = "";
                             $("#suggest").text("");
                             $("#suggest_num").text("");
@@ -247,7 +252,7 @@
                             else {
                                 for (key in morsedatas_alpha_large) {
                                     morsedatas_alpha[key] = morsedatas_alpha_large[key];
-                                    morsedatas[key] = morsedatas_alpha_large[key];        
+                                    morsedatas[key] = morsedatas_alpha_large[key];
                                 }
                             }
                         }
