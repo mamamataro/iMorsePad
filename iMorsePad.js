@@ -22,30 +22,60 @@ $(function(){
 	var cancelTouchHandler = getCANCELInputHandler();
 	var slchangeTouchHandler = getSLchangeInputHandler();
 
-	$("#morseinput").bind("touchstart touchend", morseTouchHandler);
+	// $("#morseinput").bind("touchstart touchend", morseTouchHandler);
+	// $("#morseinput").bind("gesturemove", morseTouchHandler);
 	
 	// input "ton" by tap
 	$("#morseinput").bind("tap", function(e){
-			// ton
-			morse_queue += '・ ';
+		e.preventDefault();
+		// ton
+		morse_queue += '・ ';
+		request_suggest();
 	});
-
-	// input "tu-" by swipe
-	$("#morseinput").bind("swipe", function(e){
-			/*
-			 * //cancel same touch input if(morse_queue.length >1) { morse_queue =
-			 * morse_queue.slice(0, morse_queue.length - 2); }
-			 */
-			// tu-
-			morse_queue += 'ー ';
-			isSwipe = "true";
+	
+	$("#morseinput").bind("swiperight", function(e){ 
+		e.preventDefault();
+		// input "tu-" by swiperight
+		// tu-
+		morse_queue += 'ー ';
+		isSwipe = "true";
+		request_suggest();
 	});
+	
+	$("#morseinput").bind("swipeleft", function(e){ 
+		e.preventDefault();
+		// input HH by swipeleft
+		if(morse_queue.length > 0) {
+			// HH (BS) from morse queue
+			var hhmsg= morse_queue.slice(0, morse_queue.length-2);
+			morse_queue = new String(hhmsg);
+			if(morse_queue.length < 2) {
+				morse_queue ="";
+			}
+			request_suggest();
+		} else {
+			// HH (BS) from edit box
+			var tmpmsg = $("#input-box").val();
+			var hhmsg = tmpmsg.slice(0, tmpmsg.length-1);
+			$("#input-box").val(hhmsg);
+		}
+	});
+	
+	/*
+	 * if(morse_fingers > 1) { // input HH by swipeleft 2 fingers if(e.type ==
+	 * "swipeleft") { // HH (BS) var tmpmsg = $("#input-box").val(); var hhmsg =
+	 * tmpmsg.slice(0, tmpmsg.length - 1); $("#input-box").val(hhmsg); } //
+	 * input SPACE by swiperight 2 fingers if(e.type == "swiperight") { // SPACE
+	 * var tmpmsg = $("#input-box").val(); $("#input-box").val(tmpmsg + " "); } }
+	 * });
+	 */
+	
 	isSwipe = "false";
 	isMorseInput = false;
+	morse_fingers = 0;
 
 	$("#decision").bind("touchstart touchend", okTouchHandler);
 	$("#cancel").bind("touchstart touchend", cancelTouchHandler);
-
 	$("#slchange").bind("touchstart touchend", slchangeTouchHandler);                    
 });
 
@@ -53,6 +83,7 @@ var morsedatas = {}
 var morsedatas_alpha = {}
 var isAlphaSmall = false;
 var isSwipe ="false";
+var morse_fingers = 0;
 
 var morsedatas_alpha_large = {
 		"・ ー ": "A",
@@ -222,6 +253,7 @@ function getMorseInputHandler(){
         isMorseInput = true;        
         e.preventDefault();
         // var touch = e.touches[0];
+        morse_fingers = e.originalEvent.touches.length;
         var touch = e.originalEvent.touches[0];
         /*
 		 * if (e.type == "touchstart") { tX = touch.pageX; tY = touch.pageY;
@@ -243,6 +275,19 @@ function getMorseInputHandler(){
 	}
 }
 
+function request_suggest(){
+	// suggest
+	if(morse_queue == "") {
+		$("#suggest").text("");
+		$("#suggest_num").text("");
+		$("#suggest_etc").text("");
+	}
+	reqestFunction(morse_alpha_suggest);
+	reqestFunction(morse_num_suggest);
+	reqestFunction(morse_etc_suggest);
+	reqestFunction(is_morse_suggest);	
+}
+
 function reqestFunction(func){
 	setTimeout(func, 3);
 }
@@ -261,7 +306,7 @@ function morse_alpha_suggest(){
 	for (key in morsedatas_alpha) {
 		if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
 			suggests.push(key);
-			var nextstr = key.slice(morse_queue.length - 1);
+			var nextstr = key.slice(morse_queue.length -1);
 			tmpstr += "<li>" + "<strong>" + morse_queue.fontcolor("red") + "</strong>" + nextstr + " => " + morsedatas_alpha[key] + "</li>";
 		}
 	}
@@ -276,7 +321,7 @@ function morse_num_suggest(){
 	for (key in morsedatas_num) {
 		if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
 			suggests.push(key);
-			var nextstr = key.slice(morse_queue.length - 1);
+			var nextstr = key.slice(morse_queue.length -1);
 			tmpstr += "<li>" + "<strong>" + morse_queue.fontcolor("red") + "</strong>" + nextstr + " => " + morsedatas_num[key] + "</li>";
 		}
 	}
@@ -290,7 +335,7 @@ function morse_etc_suggest(){
 	for (key in morsedatas_etc) {
 		if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
 			suggests.push(key);
-			var nextstr = key.slice(morse_queue.length - 1);
+			var nextstr = key.slice(morse_queue.length -1);
 			tmpstr += "<li>" + "<strong>" + morse_queue.fontcolor("red") + "</strong>" + nextstr + " => " + morsedatas_etc[key] + "</li>";
 		}
 	}
