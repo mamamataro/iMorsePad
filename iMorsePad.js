@@ -22,7 +22,7 @@ $(function(){
 	var cancelTouchHandler = getCANCELInputHandler();
 	var slchangeTouchHandler = getSLchangeInputHandler();
 
-	// $("#morseinput").bind("touchstart touchend", morseTouchHandler);
+	$("#morseinput").bind("touchstart touchend", morseTouchHandler);
 	// $("#morseinput").bind("gesturemove", morseTouchHandler);
 	
 	// input "ton" by tap
@@ -246,31 +246,21 @@ function getMorseInputHandler(){
 	// global var
 	// var tX, tY = 0;
 	// var sTime = 0;
-
 	// if(isMorseInput) return;
 
 	return function(e){
         isMorseInput = true;        
         e.preventDefault();
         // var touch = e.touches[0];
-        morse_fingers = e.originalEvent.touches.length;
+        //morse_fingers = e.originalEvent.touches.length;
         var touch = e.originalEvent.touches[0];
-        /*
-		 * if (e.type == "touchstart") { tX = touch.pageX; tY = touch.pageY;
-		 * sTime = (new Date()).getTime(); // morse - on
-		 * reqestFunction(morse_on); } else if (e.type == "touchend") { // morse -
-		 * off reqestFunction(morse_off); //ignore touchend when swipe
-		 * if(isSwipe == "true") { isSwipe = "false"; return; }
-		 * 
-		 * var dt = (new Date()).getTime() - sTime; if (dt < 300) { // ton
-		 * morse_queue += '・ '; } else if (dt > 300 && dt < 2000) { // tu-
-		 * morse_queue += 'ー '; } }
-		 */
-		// suggest
-		reqestFunction(morse_alpha_suggest);
-		reqestFunction(morse_num_suggest);
-		reqestFunction(morse_etc_suggest);
-		reqestFunction(is_morse_suggest);
+		if (e.type == "touchstart") {
+			// morse - on
+			reqestFunction(morse_on);
+		} else if (e.type == "touchend") { 
+			// morse -off 
+			reqestFunction(morse_off);
+		}		
 		isMorseInput = false;
 	}
 }
