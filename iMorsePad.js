@@ -373,7 +373,7 @@ function delete_arrow_left(){
 
 function morse_alpha_suggest(){
     var suggests = [];
-    var tmpstr = "<ul>";
+    var tmpstr = "<ul data-role=\"listview\" data-inset=\"true\">";
     for (key in morsedatas_alpha) {
         if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
             suggests.push(key);
@@ -387,7 +387,7 @@ function morse_alpha_suggest(){
 
 function morse_num_suggest(){
     var suggests = [];
-    var tmpstr = "<ul>";
+    var tmpstr = "<ul data-role=\"listview\" data-inset=\"true\">";
     for (key in morsedatas_num) {
         if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
             suggests.push(key);
@@ -401,7 +401,7 @@ function morse_num_suggest(){
 
 function morse_etc_suggest(){
     var suggests = [];
-    var tmpstr = "<ul>";
+    var tmpstr = "<ul data-role=\"listview\" data-inset=\"true\">";
     for (key in morsedatas_etc) {
         if (key.indexOf(morse_queue) == 0 && $.inArray(key, suggests) == -1) {
             suggests.push(key);
