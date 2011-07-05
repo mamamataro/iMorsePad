@@ -2,10 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
         <style type="text/css">
             body {
                 font-family: sans-serif;
-                font-size: 13px;
+                font-size: 15px;
             }
             
             hr {
@@ -18,11 +19,27 @@
                 font-weight: bold;
                 margin-top: 10px;
             }
+            
+            .ui-grid-c .ui-block-a {
+                width: 45%;
+            }
+            
+            .ui-grid-c .ui-block-b {
+                width: 7.5%;
+            }
+            
+            .ui-grid-c .ui-block-c {
+                width: 40%;
+            }
+            
+            .ui-grid-c .ui-block-d {
+                width: 7.5%;
+            }
         </style>
         <title>New IME Project</title>
     </head>
     <body>
-        <div data-role="page" id="foo">
+        <div data-role="page" id="foo" data-theme="e">
             <p>
                 Test for iPad/iPhone/Android only.
             </p>
@@ -42,26 +59,25 @@
                         </input>
                     </div>
                     <div class="ui-block-b">
-                        <div id="suggest">
+                        <div id="arrow_left">
                         </div>
                     </div>
                     <div class="ui-block-c">
-                        <div id="suggest_num">
+                        <div id="suggest">
                         </div>
                     </div>
                     <div class="ui-block-d">
-                        <div id="suggest_etc">
+                        <div id="arrow_right">
                         </div>
                     </div>
                 </div>
                 </div>
             </div>
             </body>
-            <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js">
+            <script src="http://code.jquery.com/jquery-1.6.1.min.js">
             </script>
             <script type="text/javascript" src="iMorsePad.js">
             </script>
-            <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
-            <script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js">
+            <script src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js">
             </script>
         </html>
